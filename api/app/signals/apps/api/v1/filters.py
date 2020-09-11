@@ -93,6 +93,12 @@ class SignalFilter(FilterSet):
         field_name='category_assignment__category__slug',
     )
 
+    category_filter_label = filters.ModelMultipleChoiceFilter(
+        queryset=_get_parent_category_queryset(),
+        to_field_name='filter_label',
+        field_name='category_assignment__category__filter_label',
+    )
+
     priority = filters.MultipleChoiceFilter(field_name='priority__priority',
                                             choices=Priority.PRIORITY_CHOICES)
 

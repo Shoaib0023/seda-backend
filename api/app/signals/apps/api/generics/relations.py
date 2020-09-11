@@ -4,7 +4,6 @@ from rest_framework.reverse import reverse
 
 class ParameterisedHyperlinkedRelatedField(relations.HyperlinkedRelatedField):
     lookup_fields = (('pk', 'pk'),)
-    # lookup_fields = (('category_level_name1', 'cat1'), ('category_level_name2', 'cat2'), ('category_level_name3', 'cat3'), ('category_level_name4', 'cat4'))
 
     def __init__(self, *args, **kwargs):
         self.lookup_fields = kwargs.pop('lookup_fields', self.lookup_fields)
@@ -29,10 +28,19 @@ class ParameterisedHyperlinkedRelatedField(relations.HyperlinkedRelatedField):
             Which will result in a lookup in the database like
                 self.get_queryset().get(parent__slug='X', slug='Y')
         """
+        print(view_name, view_kwargs)
         kwargs = {}
+        if 'cat1' in view_kwargs and 'cat2' in view_kwargs and 'cat3' in view_kwargs and not 'cat4' in view_kwargs:
+            self.lookup_fields = (('category_level_name1', 'cat1'), ('category_level_name2', 'cat2'), ('category_level_name3', 'cat3'))
+        else:
+            self.lookup_fields = (('category_level_name1', 'cat1'), ('category_level_name2', 'cat2'), ('category_level_name3', 'cat3'), ('category_level_name4', 'cat4'))
+
+        print(self.lookup_fields)
         for model_field, url_param in self.lookup_fields:
             model_field = model_field.replace('.', '__')
             kwargs[model_field] = view_kwargs[url_param]
+
+        print(kwargs)
         return self.get_queryset().get(**kwargs)
 
     def get_url(self, obj, view_name, request, format):
@@ -50,6 +58,11 @@ class ParameterisedHyperlinkedRelatedField(relations.HyperlinkedRelatedField):
             For this example the lookup_fields will look like
                 (('parent.slug', 'slug'), ('slug', 'sub_slug'))
         """
+        if not obj.category_level_name4:
+            self.lookup_fields = (('category_level_name1', 'cat1'), ('category_level_name2', 'cat2'), ('category_level_name3', 'cat3'))
+        else:
+            self.lookup_fields = (('category_level_name1', 'cat1'), ('category_level_name2', 'cat2'), ('category_level_name3', 'cat3'), ('category_level_name4', 'cat4'))
+
         kwargs = {}
         for model_field, url_param in self.lookup_fields:
             attr = obj

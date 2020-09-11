@@ -93,25 +93,17 @@ class UserDetailHALSerializer(WriteOnceMixin, HALSerializer):
 
     def create(self, validated_data):
         self.get_extra_kwargs()
-
         profile_data = validated_data.pop('profile', None)
-        # print(validated_data)
-        # print(profile_data)
 
         validated_data['email'] = validated_data['username']  # noqa The email address and username are basically the same. TODO refactor this behavior in the user model
         instance = super(UserDetailHALSerializer, self).create(validated_data=validated_data)
 
-        # print(instance, instance.email, instance.username, instance.profile, instance.profile.created_at, instance.country)
-
         if profile_data:
-            # country_data = profile_data["country"]
-            # if Country.objects.filter(country_name__iexact=country_data["country_name"]).exists():
             profile_detail_serializer = ProfileDetailSerializer()
             profile_detail_serializer.update(instance=instance.profile,
                                              validated_data=profile_data)
 
         instance.refresh_from_db()
-
         return instance
 
     def update(self, instance, validated_data):

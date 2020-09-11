@@ -11,12 +11,10 @@ from change_log.logger import ChangeLogger
 class CategoryManager(models.Manager):
     def get_from_url(self, url):
         _, _, kwargs = resolve((urlparse(url)).path)
-        if 'slug' in kwargs and 'sub_slug' in kwargs:
-            return self.get_queryset().get(slug=kwargs['sub_slug'], parent__slug=kwargs['slug'])
-        else:
-            return self.get_queryset().get(slug=kwargs['slug'], parent__isnull=True)
+        if 'cat4' in kwargs:
+            return self.get_queryset().get(category_level_name1=kwargs['cat1'], category_level_name2=kwargs['cat2'], category_level_name3=kwargs['cat3'], category_level_name4=kwargs['cat4'])
 
-        # return self.get_queryset().get(category_level_name1=kwargs['cat1'], category_level_name2=kwargs['cat2'], category_level_name3=kwargs['cat3'], category_level_name4=kwargs['cat4'], parent__isnull=True)
+        return self.get_queryset().get(category_level_name1=kwargs['cat1'], category_level_name2=kwargs['cat2'], category_level_name3=kwargs['cat3'])
 
 
 class Category(models.Model):
@@ -77,8 +75,6 @@ class Category(models.Model):
 
     name = models.CharField(max_length=255)
 
-    # changes
-    # new_slug = AutoSlugField(populate_from=['category_level_1', ], blank=False, overwrite=False, editable=False, null=True)
     new_slug = models.CharField(max_length=255, null=True, blank=True)
 
     category_level_name1 = models.CharField(max_length=255, null=True, blank=True)
@@ -89,6 +85,7 @@ class Category(models.Model):
     country = models.ForeignKey('signals.Country', on_delete=models.SET_NULL, null=True)
     city = models.ForeignKey('signals.City', on_delete=models.SET_NULL, null=True)
 
+    filter_label = models.CharField(max_length=255, null=True, blank=True)
     # SIG-2397 Handling is replaced by a handling_message
     # Notice: The handling_message will be used in communication (e-mail) to the citizen
     handling = models.CharField(max_length=20, choices=HANDLING_CHOICES, default=HANDLING_REST)
@@ -122,37 +119,29 @@ class Category(models.Model):
 
     def __str__(self):
         """String representation."""
-        # changes
-        return '{name}{parent}'.format(name=self.name,
-                                       parent=" ({})".format(
-                                           self.parent.name) if self.parent else ""
-                                       )
+        if self.category_level_name4:
+            return '{} - {} - {} - {}'.format(self.category_level_name1, self.category_level_name2, self.category_level_name3, self.category_level_name4)
 
-    # remove
+        elif self.category_level_name3:
+            return '{} - {} - {}'.format(self.category_level_name1, self.category_level_name2, self.category_level_name3)
+
+        else:
+            return name
+
+
     def is_parent(self):
         return self.children.exists()
 
-    # remove
     def is_child(self):
         return self.parent is not None
 
     def clean(self):
         super(Category, self).clean()
 
-        # remove
         if self.pk and self.slug:
             if not Category.objects.filter(id=self.pk, slug=self.slug).exists():
                 raise ValidationError('Category slug cannot be changed')
 
-        # add
-        '''
-        if self.pk and self.slug_new:
-            if not Category.objects.filter(id=self.pk, slug_new=self.slug_new).exists():
-                raise ValidationError('Category slug cannot be changed')
-
-        '''
-
-        # remove
         if self.is_parent() and self.is_child() or self.is_child() and self.parent.is_child():
             raise ValidationError('Category hierarchy can only go one level deep')
 

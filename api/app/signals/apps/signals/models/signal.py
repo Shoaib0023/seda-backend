@@ -1,4 +1,6 @@
 import uuid
+# import pika
+import json 
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -13,6 +15,7 @@ from signals.apps.signals import workflow
 from signals.apps.signals.managers import SignalManager
 from signals.apps.signals.models.mixins import CreatedUpdatedModel
 from signals.apps.signals.querysets import SignalQuerySet
+from django.db.models.signals import post_save
 
 
 class Signal(CreatedUpdatedModel):
@@ -217,3 +220,39 @@ class Signal(CreatedUpdatedModel):
     @property
     def type_assignment(self):
         return self.types.first() if self.types.exists() else None
+
+
+
+def publish_to_queue(sender, instance, **kwargs):
+    # print(instance)
+    data = {"signals": {}}
+    signal_data = data["signals"]
+
+     # ? Constructing data format needed for MB to create Signal
+    signal_data["description"] = instance.text
+    signal_data["category"] = "Afval"
+    signal_data["sub_category"] = "Afvalbakken"
+    signal_data["sub_category1"] = "Afvalbak"
+    signal_data["sub_category2"] = "Vol"
+    # signal_data["user_id"] = signal.text
+    signal_data["address"] = "Damrak 247 1012ZJ Amsterdam"
+    signal_data["is_edit"] = "true"
+    signal_data["locations"] = [4.99054263,52.29994823]
+    signal_data["report_type"] = "SEDA"
+    signal_data["language"] = "1"
+
+    credentials = pika.PlainCredentials('signals', 'insecure')
+    parameters = pika.ConnectionParameters('localhost', 5672, 'vhost', credentials)
+
+    connection = pika.BlockingConnection(parameters)
+    channel = connection.channel()
+
+    channel.queue_declare(queue='SEDA-MB', durable=True)
+
+    channel.basic_publish(exchange='SEDA-MB-exchange', routing_key='hello', body=json.dumps(data, indent=4, sort_keys=True, default=str))
+    print("Data is successfully published to the queue !!")
+    connection.close()
+
+
+
+# post_save.connect(publish_to_queue, sender=Signal)

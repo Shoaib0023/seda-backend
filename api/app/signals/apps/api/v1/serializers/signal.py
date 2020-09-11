@@ -317,7 +317,7 @@ class PrivateSignalSerializerList(HALSerializer, AddressValidationMixin):
         return obj.attachments.exists()
 
     def create(self, validated_data):
-        # print(validated_data)
+        print(validated_data)
         # return
 
         if validated_data.get('directing_departments_assignment') is not None:
@@ -396,7 +396,7 @@ class PublicSignalSerializerDetail(HALSerializer):
             'country',
             'city',
             'finished_by',
-            'city_object'
+            'city_object',
         )
 
     def get__display(self, obj):

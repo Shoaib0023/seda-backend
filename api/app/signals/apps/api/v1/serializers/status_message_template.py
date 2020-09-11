@@ -29,6 +29,7 @@ class StateStatusMessageTemplateListSerializer(serializers.ListSerializer):
         )
         return self._transform_representation(representation)
 
+
     def to_internal_value(self, data):
         status_template_messages = []
         for item in data:
@@ -74,6 +75,7 @@ class StateStatusMessageTemplateSerializer(serializers.Serializer):
     def get_template(self, obj):
         # See StateStatusMessageTemplateListSerializer to know how the templates are rendered in
         # lists. This serializer is always called with `many=True`
+        # print(obj)
         return {
             'title': obj.title,
             'text': obj.text,

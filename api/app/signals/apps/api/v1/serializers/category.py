@@ -37,6 +37,7 @@ class CategoryHALSerializer(HALSerializer):
             'category_level_name2',
             'category_level_name3',
             'category_level_name4',
+            'filter_label',
         )
 
     def get_departments(self, obj):
@@ -65,6 +66,7 @@ class ParentCategoryHALSerializer(HALSerializer):
             'category_level_name2',
             'category_level_name3',
             'category_level_name4',
+            'filter_label',
         )
 
 
@@ -120,18 +122,19 @@ class PrivateCategorySerializer(HALSerializer):
             'sla',
             'new_sla',
             'departments',
-
+            'filter_label',
             'category_level_name1',
             'category_level_name2',
             'category_level_name3',
             'category_level_name4',
             'country',
-            'city'
+            'city',
         )
         read_only_fields = (
             'id',
             'slug',
             'sla',
+            'filter_label'
             'departments',  # noqa Is read-only by default because we use the SerializerMethodField but also added here for readability
         )
 

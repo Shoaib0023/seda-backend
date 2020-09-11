@@ -9,6 +9,3 @@ class SignalCityObject(CreatedUpdatedModel):
     city_obj = models.ForeignKey('signals.CityObject', null=True, blank=True, on_delete=models.SET_NULL)
     signal = models.ForeignKey('signals.Signal', null=True, blank=True, on_delete=models.SET_NULL)
     is_Orac = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.oracCode

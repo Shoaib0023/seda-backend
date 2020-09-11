@@ -16,7 +16,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Django settings
 SECRET_KEY = os.getenv('SECRET_KEY', 'insecure')
-DEBUG = False
+DEBUG = True
 
 # localhost and 127.0.0.1 are allowed because the deployment process checks the health endpoint with a
 # request to localhost:port
@@ -144,10 +144,10 @@ DATABASES = {
 
 # Internationalization
 LANGUAGE_CODE = 'nl-NL'
-TIME_ZONE = 'Europe/Amsterdam'
-USE_I18N = True
-USE_L10N = True
-USE_TZ = True
+# TIME_ZONE = 'Europe/Amsterdam'
+# USE_I18N = True
+# USE_L10N = True
+# USE_TZ = True
 DATETIME_FORMAT = 'l d-m-Y, H:i'  # e.g. "Donderdag 06-09-2018, 13:56"
 
 # Static files (CSS, JavaScript, Images) and media files

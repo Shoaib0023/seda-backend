@@ -34,7 +34,7 @@ class CategoryNameViewSet(RetrieveModelMixin, GenericViewSet):
         # print(self.kwargs)
         queryset = self.filter_queryset(self.get_queryset())
 
-        if 'cat4' in self.kwargs and self.kwargs['cat4'] != 'none' or self.kwargs['cat4'] != 'None':
+        if 'cat4' in self.kwargs:
             obj = get_object_or_404(queryset,
                                     category_level_name1=self.kwargs['cat1'],
                                     category_level_name2=self.kwargs['cat2'],

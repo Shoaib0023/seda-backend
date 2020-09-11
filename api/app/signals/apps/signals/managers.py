@@ -281,7 +281,7 @@ class SignalManager(models.Manager):
     def add_image(self, image, signal, issue_finish=False):
         return self.add_attachment(image, signal, issue_finish)
 
-    def add_attachment(self, file, signal, issue_finish):
+    def add_attachment(self, file, signal, issue_finish=False):
         from .models import Attachment
 
         with transaction.atomic():

@@ -8,15 +8,24 @@ Model the workflow of responding to a Signal (melding) as state machine.
 LEEG = ''
 GEMELD = 'm'
 AFWACHTING = 'i'
-BEHANDELING = 'b'
 ON_HOLD = 'h'
 AFGEHANDELD = 'o'
-GEANNULEERD = 'a'
 GESPLITST = 's'
 HEROPEND = 'reopened'
+BEHANDELING = 'b'
+GEANNULEERD = 'a'
 VERZOEK_TOT_AFHANDELING = 'closure requested'
 INGEPLAND = 'ingepland'
 VERZOEK_TOT_HEROPENEN = 'reopen requested'
+# NEW = 'n'
+# PENDING_TREATMENT = 'p'
+# IN_CASE_OF_THE_TREATMENT = 'i'
+# SCHEDULED = 's'
+# HANDLED = 'h'
+# REJECTED = 'r'
+# MORE_INFORMATION_DESIRED = 'm'
+# REOPENED = 'o'
+# SPLIT = 't'
 
 # Statusses to track progress in external systems
 TE_VERZENDEN = 'ready to send'
@@ -26,17 +35,27 @@ AFGEHANDELD_EXTERN = 'done external'
 
 # Choices for the API/Serializer layer. Users that can change the state via the API are only allowed
 # to use one of the following choices.
+# (NEW, 'New'),
+# (PENDING_TREATMENT, 'Pending Treatment'),
+# (IN_CASE_OF_THE_TREATMENT, 'In the case of the party'),
+# (SCHEDULED, 'Scheduled'),
+# (HANDLED, 'Handled'),
+# (REJECTED, 'Rejected'),
+# (REOPENED, 'Reopened'),
+# (SPLIT, 'Split'),
+# (MORE_INFORMATION_DESIRED, 'More information desired')
+
 STATUS_CHOICES_API = (
     (GEMELD, 'Gemeld'),
     (AFWACHTING, 'In afwachting van behandeling'),
-    (BEHANDELING, 'In behandeling'),
     (ON_HOLD, 'On hold'),
+    (AFGEHANDELD, 'Afgehandeld'),
+    (GESPLITST, 'Gesplitst'),
+    (HEROPEND, 'Heropend'),
+    (BEHANDELING, 'In behandeling'),
     (INGEPLAND, 'Ingepland'),
     (TE_VERZENDEN, 'Te verzenden naar extern systeem'),
-    (AFGEHANDELD, 'Afgehandeld'),
     (GEANNULEERD, 'Geannuleerd'),
-    (HEROPEND, 'Heropend'),
-    (GESPLITST, 'Gesplitst'),
     (VERZOEK_TOT_AFHANDELING, 'Verzoek tot afhandeling'),
 )
 
@@ -51,6 +70,7 @@ STATUS_CHOICES_APP = (
 
 # All allowed choices, used for the model `Status`.
 STATUS_CHOICES = STATUS_CHOICES_API + STATUS_CHOICES_APP
+
 
 ALLOWED_STATUS_CHANGES = {
     LEEG: [
@@ -143,3 +163,4 @@ ALLOWED_STATUS_CHANGES = {
         GEANNULEERD,
     ]
 }
+
